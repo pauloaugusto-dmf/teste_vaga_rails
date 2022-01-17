@@ -5,8 +5,12 @@ class ProductsController < ApplicationController
     render json: { errors: [error.message] }, status: :not_found
   end
 
+  MAX_PAGINATION_LIMIT = 100
+  DEFAULT_PAGINATION_LIMIT = 20
+
   def index
-    @products = Product.all
+    @products = Product.limit(limit).offset(params[:offset])
+    render json: @products
   end
 
   def show; end
@@ -34,6 +38,13 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  def limit
+    [
+      params.fetch(:limit, DEFAULT_PAGINATION_LIMIT).to_i,
+      MAX_PAGINATION_LIMIT
+    ].min
+  end
 
   def set_product
     @product = Product.find(params[:id])
