@@ -1,7 +1,38 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[show update destroy]
 
-  has_scope :order_by
+  with_options only: :index do
+    has_scope :order_by
+    has_scope :by_name
+    has_scope :name_not_contain
+    has_scope :by_description
+    has_scope :description_not_contain
+
+    has_scope :by_price_less
+    has_scope :by_price_less_or_equal
+    has_scope :by_price_greater
+    has_scope :by_price_greater_or_equal
+    has_scope :by_price_equal
+    has_scope :by_price_not_equal
+
+    has_scope :by_quantity_less
+    has_scope :by_quantity_less_or_equal
+    has_scope :by_quantity_greater
+    has_scope :by_quantity_greater_or_equal
+    has_scope :by_quantity_equal
+    has_scope :by_quantity_not_equal
+
+    has_scope :by_created_at_less
+    has_scope :by_created_at_less_or_equal
+    has_scope :by_created_at_greater
+    has_scope :by_created_at_greater_or_equal
+
+    has_scope :by_updated_at_less
+    has_scope :by_updated_at_less_or_equal
+    has_scope :by_updated_at_greater
+    has_scope :by_updated_at_greater_or_equal
+
+  end
   
   rescue_from ActiveRecord::RecordNotFound do |error|
     render json: { errors: [error.message] }, status: :not_found
