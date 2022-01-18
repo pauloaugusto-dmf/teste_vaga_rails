@@ -1,6 +1,8 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[show update destroy]
 
+  has_scope :order_by
+  
   rescue_from ActiveRecord::RecordNotFound do |error|
     render json: { errors: [error.message] }, status: :not_found
   end
@@ -9,7 +11,10 @@ class ProductsController < ApplicationController
   DEFAULT_PAGINATION_LIMIT = 20
 
   def index
+    @products = Product.all
     @products = Product.limit(limit).offset(params[:offset])
+    @products = apply_scopes(@products).all
+    
     render json: @products
   end
 

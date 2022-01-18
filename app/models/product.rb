@@ -5,4 +5,7 @@ class Product < ApplicationRecord
     validates :price
     validates :quantity
   end
+
+  scope :order_by, lambda{|ordering| order(ordering)}
+  
 end
