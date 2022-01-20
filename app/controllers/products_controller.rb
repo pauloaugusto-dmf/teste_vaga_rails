@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[show update destroy]
+  before_action :set_product, only: %i[show update destroy list_relation create_relation destroy_relation]
 
   with_options only: :index do
     has_scope :order_by
@@ -72,6 +72,26 @@ class ProductsController < ApplicationController
   def destroy
     @product.destroy
   end
+
+  def list_relation
+    render json: @product.relations
+  end
+
+  def create_relation
+    if Product.exists?(id: params[:related_product_id]) and (params[:related_product_id] != params[:id]) 
+      @relation_product = Product.find(params[:related_product_id])
+      @product.relations << [@relation_product]
+      render json: @product.relations
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy_relation
+    @product.relations.delete(params[:related_product_id])
+  end
+ 
+ 
 
   private
 

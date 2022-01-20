@@ -1,4 +1,10 @@
 class Product < ApplicationRecord
+  has_many :related_link, foreign_key: :relation_id, class_name: 'RelationGrouping'
+  has_many :related, through: :related_link, source: :related
+
+  has_many :relation_link, foreign_key: :related_id, class_name: 'RelationGrouping'
+  has_many :relations, through: :relation_link, source: :relation
+
   with_options presence: true do
     validates :name, uniqueness: true
     validates :description
