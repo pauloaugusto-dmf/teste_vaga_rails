@@ -113,10 +113,15 @@ rspec -f doc
 ## API Documentation
 - Product
   - [list](#list-products)
+  - [list pages](#list-products-pages)
+  - [list order](#list-products-order)
+  - [list filter](#list-products-filter)
   - [get details](#get-product-details)
   - [create](#create-a-product)
   - [update](#update-a-product)
   - [delete](#delete-a-product)
+  - [create relation](#create-a-relation)
+  - [delete relation](#delete-a-relation)
 
 ### List Products
 ```
@@ -138,6 +143,60 @@ GET /products
 ]
 ```
 
+### List Product Pages
+
+
+limit pages (max 20)
+```
+GET /products?pages=10
+```
+offset
+```
+GET /products?pages=10&offset=2
+```
+
+### List Product Order
+order_by=column order
+```
+GET /products?order_by=name asc
+```
+```
+GET /products?order_by=quantity desc
+```
+
+### List Product Filter
+Available filters
+- by_name 
+- name_not_contails 
+- by_description
+- description_not_contain
+- by_price_less
+- by_price_less_or_equal
+- by_price_greater
+- by_price_greater_or_equal
+- by_price_equal
+- by_price_not_equal
+- by_quantity_less
+- by_quantity_less_or_equal
+- by_quantity_greater
+- by_quantity_greater_or_equal
+- by_quantity_equal
+- by_quantity_not_equal
+- by_created_at_less
+- by_created_at_less_or_equal
+- by_created_at_greater
+- by_created_at_greater_or_equal
+- by_updated_at_less
+- by_updated_at_less_or_equal
+- by_updated_at_greater
+- by_updated_at_greater_or_equal
+```
+GET /products?by_name=Product test
+```
+```
+GET /products?by_quantity_less_or_equal=50
+```
+
 ### Get Product details
 ```
 GET /products/:id
@@ -152,7 +211,14 @@ GET /products/:id
   "price": "10.99",
   "quantity": 50,
   "created_at": "2021-07-05T23:13:17.383Z",
-  "created_at": "2021-07-05T23:13:17.383Z"
+  "created_at": "2021-07-05T23:13:17.383Z",
+  "relations": [
+		{
+			"id": 2,
+			"name": "Other Product",
+			"price": "53.49"
+		}
+	]
 }
 ```
 
@@ -245,5 +311,49 @@ null
 // response body, status: 404
 {
   "errors": ["Couldn't find Product with 'id'=22"]
+}
+```
+
+### Create a Relation
+
+```
+POST /products/:id/related_products/:related_product_id
+```
+
+```json
+// response body, status: 200
+{
+	"id": 2,
+	"name": "Other Product",
+	"price": "53.49"
+}
+```
+
+
+```json
+// response body, status: 422
+{
+	"errors": "Unable to link products"
+}
+```
+
+### Delete a Relation
+
+```
+DELETE /products/:id/related_products/:related_product_id
+```
+
+```json
+// response body, status: 204
+null
+```
+
+
+```json
+// response body, status: 404
+{
+	"errors": [
+		"Couldn't find Product with 'id'=1 [WHERE \"relation_groupings\".\"related_id\" = $1]"
+	]
 }
 ```
