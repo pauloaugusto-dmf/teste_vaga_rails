@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe '/products', type: :request do
   let(:valid_attributes) { attributes_for(:product) }
+  let(:valid_attributes_2) { attributes_for(:product) }
   let(:invalid_attributes) { valid_attributes.merge(price: nil) }
 
   describe 'GET /index' do
@@ -44,7 +45,8 @@ RSpec.describe '/products', type: :request do
           price: product.price.as_json,
           quantity: product.quantity,
           created_at: product.created_at.as_json,
-          updated_at: product.updated_at.as_json
+          updated_at: product.updated_at.as_json,
+          relations: []
         )
       end
     end
@@ -150,6 +152,23 @@ RSpec.describe '/products', type: :request do
     it 'destroys the requested product' do
       product = Product.create! valid_attributes
       expect { delete product_url(product), as: :json }.to change(Product, :count).by(-1)
+    end
+  end
+
+  describe 'POST /create_relation' do
+    let(:product_1) { Product.create! valid_attributes }
+    let(:product_2) { Product.create! valid_attributes_2 }
+
+    before do
+      post (product_url(product_1) + "/related_products/" +  product_2.id.to_s)
+    end
+
+    it 'renders a JSON response with the new relation' do
+      expect(response.body).to include_json(
+        id: product_2.id,
+        name: product_2.name,
+        price: product_2.price.to_d.as_json
+      )
     end
   end
 end

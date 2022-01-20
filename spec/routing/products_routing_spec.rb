@@ -25,5 +25,13 @@ RSpec.describe ProductsController, type: :routing do
     it 'routes to #destroy' do
       expect(delete: '/products/1').to route_to('products#destroy', id: '1', format: :json)
     end
+
+    it 'routes to #create_relation' do
+      expect(post: '/products/1/related_products/2').to route_to('products#create_relation', id: '1', related_product_id: '2')
+    end
+
+    it 'routes to #destroy_relation' do
+      expect(delete: '/products/1/related_products/2').to route_to('products#destroy_relation', id: '1', related_product_id: '2')
+    end
   end
 end

@@ -1,5 +1,5 @@
 class ProductSerializer < ActiveModel::Serializer
-  attributes :id, :name, :price, :quantity, :created_at, :updated_at
+  attributes :id, :name, :description, :price, :quantity, :created_at, :updated_at
 end
 
 class ProductRalationSerializer < ActiveModel::Serializer
@@ -7,6 +7,6 @@ class ProductRalationSerializer < ActiveModel::Serializer
 end
 
 class ProductDetailSerializer < ActiveModel::Serializer
-  attributes :id, :name, :price, :quantity, :created_at, :updated_at
+  attributes :id, :name, :description, :price, :quantity, :created_at, :updated_at
   has_many :relations, serializer: ProductRalationSerializer
 end 
