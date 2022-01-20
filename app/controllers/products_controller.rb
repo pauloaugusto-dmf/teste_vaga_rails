@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[show update destroy list_relation create_relation destroy_relation]
+  before_action :set_product, only: %i[show update destroy create_relation destroy_relation]
 
   with_options only: :index do
     has_scope :order_by
@@ -49,7 +49,9 @@ class ProductsController < ApplicationController
     render json: @products
   end
 
-  def show; end
+  def show 
+    render json: @product, serializer: ProductDetailSerializer
+  end
 
   def create
     @product = Product.new(product_params)
@@ -73,17 +75,13 @@ class ProductsController < ApplicationController
     @product.destroy
   end
 
-  def list_relation
-    render json: @product.relations
-  end
-
   def create_relation
     if Product.exists?(id: params[:related_product_id]) and (params[:related_product_id] != params[:id]) 
       @relation_product = Product.find(params[:related_product_id])
       @product.relations << [@relation_product]
-      render json: @product.relations
+      render json: @relation_product, serializer: ProductRalationSerializer
     else
-      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: "Unable to link products" }, status: :unprocessable_entity
     end
   end
 
